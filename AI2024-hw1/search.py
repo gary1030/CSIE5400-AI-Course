@@ -81,8 +81,25 @@ def depthFirstSearch(problem: SearchProblem):
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # print("Start:", problem.getStartState())
+    # print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
+    # print("Start's successors:", problem.getSuccessors(problem.getStartState()))
+
+    visited = set()
+
+    def dfsWithPath(previousPath: list, state):
+        if problem.isGoalState(state):
+            return previousPath
+
+        visited.add(state)
+        for suc in problem.getSuccessors(state):
+            if suc[0] not in visited:
+                ans = dfsWithPath(previousPath+[suc[1]], suc[0])
+                if ans is not None:
+                    return ans
+        return None
+
+    return dfsWithPath([], problem.getStartState())
 
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
