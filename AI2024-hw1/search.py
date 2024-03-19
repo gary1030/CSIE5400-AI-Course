@@ -109,21 +109,34 @@ def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
     q = util.Queue()
     q.push(([], problem.getStartState()))
-    visited = set()
+    visited = []
     while not q.isEmpty():
         path, state = q.pop()
         if problem.isGoalState(state):
             return path
         if state not in visited:
-            visited.add(state)
+            visited.append(state)
             for suc in problem.getSuccessors(state):
+                # print("suc:", suc[0])
                 q.push((path+[suc[1]], suc[0]))
+
+    return None
 
 
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.PriorityQueue()
+    p = util.PriorityQueue()
+    p.push(([], problem.getStartState()), 0)
+    visited = set()
+    while not p.isEmpty():
+        path, state = p.pop()
+        if problem.isGoalState(state):
+            return path
+        if state not in visited:
+            visited.add(state)
+            for suc in problem.getSuccessors(state):
+                p.push((path+[suc[1]], suc[0]),
+                       problem.getCostOfActions(path+[suc[1]]))
 
 
 def nullHeuristic(state, problem=None):
@@ -136,8 +149,21 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    p = util.PriorityQueue()
+    p.push(([], problem.getStartState()), heuristic(
+        problem.getStartState(), problem))
+
+    visited = set()
+    while not p.isEmpty():
+        path, state = p.pop()
+        if problem.isGoalState(state):
+            return path
+        if state not in visited:
+            visited.add(state)
+            for suc in problem.getSuccessors(state):
+                cost = problem.getCostOfActions(
+                    path+[suc[1]]) + heuristic(suc[0], problem)
+                p.push((path+[suc[1]], suc[0]), cost)
 
 
 # Abbreviations
