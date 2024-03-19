@@ -14,6 +14,7 @@ Good luck and happy searching!
 
 import util
 
+
 class SearchProblem:
     """
     This class outlines the structure of a search problem, but doesn't implement
@@ -56,6 +57,7 @@ class SearchProblem:
         """
         util.raiseNotDefined()
 
+
 def tinyMazeSearch(problem):
     """
     Returns a sequence of moves that solves tinyMaze.  For any other maze, the
@@ -65,7 +67,8 @@ def tinyMazeSearch(problem):
     s = Directions.SOUTH
     w = Directions.WEST
     print("Solution:", [s, s, w, s, w, w, s, w])
-    return  [s, s, w, s, w, w, s, w]
+    return [s, s, w, s, w, w, s, w]
+
 
 def depthFirstSearch(problem: SearchProblem):
     """
@@ -101,15 +104,27 @@ def depthFirstSearch(problem: SearchProblem):
 
     return dfsWithPath([], problem.getStartState())
 
+
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    q = util.Queue()
+    q.push(([], problem.getStartState()))
+    visited = set()
+    while not q.isEmpty():
+        path, state = q.pop()
+        if problem.isGoalState(state):
+            return path
+        if state not in visited:
+            visited.add(state)
+            for suc in problem.getSuccessors(state):
+                q.push((path+[suc[1]], suc[0]))
+
 
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    util.PriorityQueue()
+
 
 def nullHeuristic(state, problem=None):
     """
@@ -117,6 +132,7 @@ def nullHeuristic(state, problem=None):
     goal in the provided SearchProblem.  This heuristic is trivial.
     """
     return 0
+
 
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
