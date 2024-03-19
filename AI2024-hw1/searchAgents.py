@@ -383,8 +383,46 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     corners = problem.corners  # These are the corner coordinates
     # These are the walls of the maze, as a Grid (game.py)
     walls = problem.walls
+    currentPosition, cornersVisited = state
+    x, y = currentPosition
+    unvisitedCorners = [
+        corner for corner, visited in cornersVisited.items() if not visited
+    ]
+    if not unvisitedCorners:
+        return 0
 
-    return 0  # Default to trivial solution
+    # Method 1: Manhattan distance to the closest corner
+    # nodes: 1475
+    # return min(
+    #     util.manhattanDistance(currentPosition, corner)
+    #     for corner in unvisitedCorners
+    # )
+
+    # Method 2: Euclidean distance to the closest corner
+    # nodes: 1532
+    # minDistance = float('inf')
+    # for corner in unvisitedCorners:
+    #     distance = ((x - corner[0]) ** 2 + (y - corner[1]) ** 2) ** 0.5
+    #     if distance < minDistance:
+    #         minDistance = distance
+    # return minDistance
+
+    # Method 3: nearest corner Manhattan distance and sum of Manhattan distances to all unvisited corners
+    # nodes: 692
+    cost = 0
+    while unvisitedCorners:
+        minDistance = float('inf')
+        nearestCorner = None
+        for corner in unvisitedCorners:
+            distance = util.manhattanDistance(currentPosition, corner)
+            if distance < minDistance:
+                minDistance = distance
+                nearestCorner = corner
+
+        cost += minDistance
+        currentPosition = nearestCorner
+        unvisitedCorners.remove(nearestCorner)
+    return cost
 
 
 class AStarCornersAgent(SearchAgent):

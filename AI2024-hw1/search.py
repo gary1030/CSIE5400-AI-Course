@@ -153,13 +153,13 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     p.push(([], problem.getStartState()), heuristic(
         problem.getStartState(), problem))
 
-    visited = set()
+    visited = []
     while not p.isEmpty():
         path, state = p.pop()
         if problem.isGoalState(state):
             return path
         if state not in visited:
-            visited.add(state)
+            visited.append(state)
             for suc in problem.getSuccessors(state):
                 cost = problem.getCostOfActions(
                     path+[suc[1]]) + heuristic(suc[0], problem)
