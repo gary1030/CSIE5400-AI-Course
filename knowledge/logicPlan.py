@@ -465,9 +465,42 @@ def foodLogicPlan(problem) -> List:
 
     KB = []
 
-    "*** BEGIN YOUR CODE HERE ***"
-    util.raiseNotDefined()
-    "*** END YOUR CODE HERE ***"
+    # initial location at timestep 0
+    KB.append(PropSymbolExpr(pacman_str, x0, y0, time=0))
+    # initial food locations
+    for x, y in food:
+        KB.append(PropSymbolExpr(food_str, x, y, time=0))
+
+    for t in range(50):
+        print("timestep:", t)
+
+        food_eaten = [~PropSymbolExpr(food_str, x, y, time=t) for x, y in food]
+
+        # Pacman is at exactly one of the squares at timestep t.
+        KB.append(exactlyOne([PropSymbolExpr(pacman_str, x, y, time=t)
+                              for x, y in non_wall_coords]))
+        # print("KB:", KB)
+
+        # findModel returns a model if one exists, otherwise False
+        model = findModel(conjoin(food_eaten) & conjoin(KB))
+        if model:
+            return extractActionSequence(model, actions)
+
+        # Pacman takes exactly one action at timestep t.
+        KB.append(exactlyOne([PropSymbolExpr(direction, time=t)
+                              for direction in actions]))
+
+        # transition model sentences
+        for x, y in non_wall_coords:
+            KB.append(pacmanSuccessorAxiomSingle(x, y, t+1, walls))
+
+        # food successor axiom
+        # if no food at (x, y) at time t+1, then either Pacman is at (x, y) at time t and eats the food or food is not at (x, y) at time t
+        for x, y in all_coords:
+            KB.append((~PropSymbolExpr(food_str, x, y, time=t) | PropSymbolExpr(
+                pacman_str, x, y, time=t)) % ~PropSymbolExpr(food_str, x, y, time=t+1))
+
+    return []
 
 
 # Abbreviations
