@@ -203,16 +203,22 @@ def inferenceByVariableEliminationWithCallTracking(callTrackingList=None):
                 set(evidenceDict.keys())
             eliminationOrder = sorted(list(eliminationVariables))
 
+        # print("queryVariables: ", queryVariables)
+        # print("evidenceDict: ", evidenceDict)
+
         currentFactorsList = bayesNet.getAllCPTsWithEvidence(evidenceDict)
         # for factor in currentFactorsList:
         #     print("factor: ", factor)
 
         for joinVariable in eliminationOrder:
             # join factors by variable
+            # print("joinVariable: ", joinVariable)
             currentFactorsList, joinedFactor = joinFactorsByVariable(
                 currentFactorsList, joinVariable)
             # for factor in currentFactorsList:
             #     print("factor: ", factor)
+
+            # print("joinedFactor: ", joinedFactor)
 
             # special case: if the joined factor has only one unconditioned variable, discard it
             if len(joinedFactor.unconditionedVariables()) == 1:
@@ -222,6 +228,8 @@ def inferenceByVariableEliminationWithCallTracking(callTrackingList=None):
             currentFactorsList.append(eliminate(joinedFactor, joinVariable))
 
         fullJoint = joinFactors(currentFactorsList)
+
+        # print("fullJoint: ", fullJoint)
 
         return normalize(fullJoint)
 
@@ -641,6 +649,7 @@ class ExactInference(InferenceModule):
             for newPos, prob in newPosDist.items():
                 predictedBeliefs[newPos] += self.beliefs[oldPos] * prob
 
+        predictedBeliefs.normalize()
         self.beliefs = predictedBeliefs
 
     def getBeliefDistribution(self):
