@@ -58,3 +58,4 @@ class ImageEnv(gym.Wrapper):
         self.stacked_state = np.concatenate((self.stacked_state[1:], state[np.newaxis]), axis=0)
         
         return self.stacked_state, rewards, terminated, truncated, info
+    

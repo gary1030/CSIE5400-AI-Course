@@ -10,16 +10,17 @@ class PacmanActionCNN(nn.Module):
     def __init__(self, state_dim, action_dim):
         super(PacmanActionCNN, self).__init__()
         # build your own CNN model
-        "*** YOUR CODE HERE ***"
-        utils.raiseNotDefined()
-        # this is just an example, you can modify this.
         self.conv1 = nn.Conv2d(state_dim, 16, kernel_size=8, stride=4)
+        self.conv2 = nn.Conv2d(16, 32, kernel_size=4, stride=2)
+        self.conv3 = nn.Conv2d(32, 32, kernel_size=3, stride=1)
+        self.fc = nn.Linear(32 * 7 * 7, action_dim)
 
     def forward(self, x):
         x = F.relu(self.conv1(x))
-        
-        "*** YOUR CODE HERE ***"
-        utils.raiseNotDefined()
+        x = F.relu(self.conv2(x))
+        x = F.relu(self.conv3(x))
+        x = x.view(x.size(0), -1)  # Flatten the tensor
+        x = self.fc(x)
         
         return x
 
@@ -88,7 +89,8 @@ class DQN:
         self.network = PacmanActionCNN(state_dim[0], action_dim)
         self.target_network = PacmanActionCNN(state_dim[0], action_dim)
         self.target_network.load_state_dict(self.network.state_dict())
-        self.optimizer = torch.optim.RMSprop(self.network.parameters(), lr)
+        self.optimizer = torch.optim.AdamW(self.network.parameters(), lr)
+        # torch.optim.RMSprop(self.network.parameters(), lr)
 
         self.buffer = ReplayBuffer(state_dim, (1, ), buffer_size)
         self.device = torch.device('cuda' if torch.cuda.is_available else 'cpu')
@@ -108,54 +110,54 @@ class DQN:
             # output actions by following epsilon-greedy policy
             x = torch.from_numpy(x).float().unsqueeze(0).to(self.device)
             
-            "*** YOUR CODE HERE ***"
-            utils.raiseNotDefined()
             # get q-values from network
-            q_value = YOUR_CODE_HERE
+            q_value = self.network(x)
             # get action with maximum q-value
-            action = YOUR_CODE_HERE
-        
+            action = torch.argmax(q_value, dim=1).item()
+
         return action
     
     def learn(self):
-        "*** YOUR CODE HERE ***"
-        utils.raiseNotDefined()
-        
         # sample a mini-batch from replay buffer
         state, action, reward, next_state, terminated = map(lambda x: x.to(self.device), self.buffer.sample(self.batch_size))
         
         # get q-values from network
-        next_q = YOUR_CODE_HERE
+        next_q = self.target_network(next_state).max(dim=1, keepdim=True)[0]
         # td_target: if terminated, only reward, otherwise reward + gamma * max(next_q)
-        td_target = YOUR_CODE_HERE
+        td_target = reward + (1 - terminated.float()) * self.gamma * next_q
+
         # compute loss with td_target and q-values
-        loss = YOUR_CODE_HERE
+        current_q = self.network(state).gather(1, action.long())
+        loss = F.mse_loss(current_q, td_target)
         
         # initialize optimizer
-        "self.optimizer.YOUR_CODE_HERE"
-        # backpropagation
-        YOUR_CODE_HERE
-        # update network
-        "self.optimizer.YOUR_CODE_HERE"
+        self.optimizer.zero_grad()
         
-        return {YOUR_CODE_HERE} # return dictionary for logging
+        # backpropagation
+        loss.backward()
+
+        # update network
+        self.optimizer.step()
+        
+        return {
+            'loss': loss.item(),
+            'epsilon': self.epsilon,
+            'reward': reward.mean().item(),
+        } # return dictionary for logging
     
     def process(self, transition):
-        "*** YOUR CODE HERE ***"
-        utils.raiseNotDefined()
-        
         result = {}
         self.total_steps += 1
         
         # update replay buffer
-        "self.buffer.YOUR_CODE_HERE"
+        self.buffer.update(*transition)
 
         if self.total_steps > self.warmup_steps:
             result = self.learn()
             
         if self.total_steps % self.target_update_interval == 0:
-            # update target networ
-            "self.target_network.YOUR_CODE_HERE"
+            self.target_network.load_state_dict(self.network.state_dict())
         
         self.epsilon -= self.epsilon_decay
         return result
+    

@@ -50,12 +50,10 @@ def validation(agent, num_evals=5):
     for i in range(num_evals):
         (state, _), done = eval_env.reset(), False
         while not done:
-            "*** YOUR CODE HERE ***"
-            utils.raiseNotDefined()
             # do action from your agent
-            action = YOUR_CODE_HERE
+            action = agent.act(state, training=False)
             # get your action feedback from environment
-            next_state, reward, terminated, truncated, info = YOUR_CODE_HERE
+            next_state, reward, terminated, truncated, info = eval_env.step(action)
             
             state = next_state
             scores += reward
@@ -63,9 +61,10 @@ def validation(agent, num_evals=5):
     return np.round(scores / num_evals, 4)
 
 def train(agent, env):
-    history = {'Step': [], 'AvgScore': []}
+    history = {'Step': [], 'AvgScore': [], 'Loss': [], 'Reward': []}
 
     (state, _) = env.reset()
+    best_score = -np.inf
     
     for _ in tqdm(range(args.max_steps)):
         
@@ -78,16 +77,34 @@ def train(agent, env):
             state, _ = env.reset()
         
         if agent.total_steps % args.eval_interval == 0:
+            print("Results: ", result)
             avg_score = validation(agent)
             history['Step'].append(agent.total_steps)
             history['AvgScore'].append(avg_score)
-            
-            # log info to plot your figure
-            "*** YOUR CODE HERE ***"
+            history['Loss'].append(result["loss"])
             
             # save model
-            torch.save(agent.network.state_dict(), save_dir / 'pacma_dqn.pt')
-            print("Step: {}, AvgScore: {}, ValueLoss: {}".format(agent.total_steps, avg_score, result["value_loss"]))
+            if avg_score > best_score:
+                best_score = avg_score
+                torch.save(agent.network.state_dict(), save_dir / 'pacma_dqn.pt')
+            print("Step: {}, AvgScore: {}, ValueLoss: {}".format(agent.total_steps, avg_score, result["loss"]))
+        
+    print(history)
+    # plot the training process
+    import matplotlib.pyplot as plt
+    plt.figure(figsize=(10, 5))
+    plt.subplot(1, 2, 1)
+    plt.plot(history['Step'], history['AvgScore'])
+    plt.xlabel('Step')
+    plt.ylabel('AvgScore')
+    plt.legend(['AvgScore'])
+    plt.subplot(1, 2, 2)
+    plt.plot(history['Step'], history['Loss'])
+    plt.xlabel('Step')
+    plt.ylabel('Loss')
+    plt.legend(['Loss'])
+    plt.savefig(save_dir / 'training_process.png')
+         
 
 def evaluate(agent, eval_env, capture_frames=True):
     seed_everything(0, eval_env) # don't modify
@@ -140,8 +157,8 @@ def main():
 if __name__ == "__main__":
     args = parse_args()
     
-    # save_dir = args.save_root / f"{args.env_name.replace('/', '-')}__{args.exp_name}__{int(time.time())}"
-    save_dir = args.save_root
+    save_dir = args.save_root / f"{int(time.time())}"
+    # save_dir = args.save_root
     if not save_dir.exists():
         save_dir.mkdir(parents=True)
     
