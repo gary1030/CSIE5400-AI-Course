@@ -1,4 +1,3 @@
-import random
 import os
 import time
 import argparse
@@ -12,6 +11,7 @@ from tqdm import tqdm
 
 from rl_algorithm import DQN
 from custom_env import ImageEnv
+from utils import seed_everything, YOUR_CODE_HERE
 import utils
 
 def parse_args():
@@ -42,77 +42,81 @@ def parse_args():
     parser.add_argument('--eval_model_path', type=str, default=None, help='the path of the model to evaluate')
     return parser.parse_args()
 
-def seed_everything(seed, env):
-    "Do not modify this function"
-    random.seed(seed)
-    np.random.seed(seed)
-    os.environ['PYTHONHASHSEED'] = str(seed)
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed(seed)
-    torch.backends.cudnn.deterministic = True
-    env.seed(seed)
-
-def validaiton(agent, num_evals=5):
-    eval_env = gym.make(args.env_name)
+def validation(agent, num_evals=5):
+    eval_env = gym.make('ALE/MsPacman-v5')
     eval_env = ImageEnv(eval_env)
     
     scores = 0
     for i in range(num_evals):
-        "*** YOUR CODE HERE ***"
-        utils.raiseNotDefined()
-        
+        (state, _), done = eval_env.reset(), False
+        while not done:
+            "*** YOUR CODE HERE ***"
+            utils.raiseNotDefined()
+            # do action from your agent
+            action = YOUR_CODE_HERE
+            # get your action feedback from environment
+            next_state, reward, terminated, truncated, info = YOUR_CODE_HERE
+            
+            state = next_state
+            scores += reward
+            done = terminated or truncated
     return np.round(scores / num_evals, 4)
 
 def train(agent, env):
-    logging_info = {'Step': [], 'AvgScore': []}
+    history = {'Step': [], 'AvgScore': []}
 
     (state, _) = env.reset()
     
     for _ in tqdm(range(args.max_steps)):
         
-        "*** YOUR CODE HERE ***"
-        utils.raiseNotDefined()
+        action = agent.act(state)
+        next_state, reward, terminated, truncated, _ = env.step(action)
+        result = agent.process((state, action, reward, next_state, terminated))  # You can track q-losses over training from `result` variable.
         
-        # agent act
-        
-        # env step
-        
-        # agent process
+        state = next_state
+        if terminated or truncated:
+            state, _ = env.reset()
         
         if agent.total_steps % args.eval_interval == 0:
-            avg_score = validaiton(agent)
+            avg_score = validation(agent)
+            history['Step'].append(agent.total_steps)
+            history['AvgScore'].append(avg_score)
             
+            # log info to plot your figure
             "*** YOUR CODE HERE ***"
-            utils.raiseNotDefined()
-            # logging
             
             # save model
-            print("Step: {}, AvgScore: {}".format(agent.total_steps, avg_score))
+            torch.save(agent.network.state_dict(), save_dir / 'pacma_dqn.pt')
+            print("Step: {}, AvgScore: {}, ValueLoss: {}".format(agent.total_steps, avg_score, result["value_loss"]))
 
 def evaluate(agent, eval_env, capture_frames=True):
     seed_everything(0, eval_env) # don't modify
     
     # load the model
     if agent is None:
-        "*** YOUR CODE HERE ***"
-        utils.raiseNotDefined()
+        action_dim = eval_env.action_space.n
+        state_dim = (args.num_envs, args.image_hw, args.image_hw)
+        agent = DQN(state_dim=state_dim, action_dim=action_dim)
+        agent.network.load_state_dict(torch.load(args.eval_model_path))
     
-    # reset env
-    done = False
+    (state, _), done = eval_env.reset(), False
+
     scores = 0
-    
-    # Record the evaluation video
+    # Record the frames
     if capture_frames:
         writer = imageio.get_writer(save_dir / 'mspacman.mp4', fps=10)
-    
+
     while not done:
         if capture_frames:
             writer.append_data(eval_env.render())
         else:
             eval_env.render()
         
-        "*** YOUR CODE HERE ***"
-        utils.raiseNotDefined()
+        action = agent.act(state, training=False)
+        next_state, reward, terminated, truncated, info = eval_env.step(action)
+        state = next_state
+        scores += reward
+        done = terminated or truncated
     if capture_frames:
         writer.close()
     print("The score of the agent: ", scores)
@@ -137,7 +141,7 @@ if __name__ == "__main__":
     args = parse_args()
     
     # save_dir = args.save_root / f"{args.env_name.replace('/', '-')}__{args.exp_name}__{int(time.time())}"
-    save_dir = args.save_root # do whatever you want
+    save_dir = args.save_root
     if not save_dir.exists():
         save_dir.mkdir(parents=True)
     

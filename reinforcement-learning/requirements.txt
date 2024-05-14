@@ -1,10 +1,10 @@
-opencv-python
-gymnasium[atari]
-gymnasium[accept-rom-license]
-numpy
-matplotlib
-opencv-python
+opencv-python==4.8.1.78
+swig==4.2.1
+gymnasium==0.29.1
+gymnasium[atari, accept-rom-license]
+numpy==1.26.4
+matplotlib==3.8.4
 imageio-ffmpeg
-imageio
+imageio==2.34.1
 torch
-torchvision
+tqdm

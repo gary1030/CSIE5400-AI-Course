@@ -3,23 +3,28 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 
+from utils import YOUR_CODE_HERE
 import utils
 
 class PacmanActionCNN(nn.Module):
     def __init__(self, state_dim, action_dim):
         super(PacmanActionCNN, self).__init__()
-        "*** YOUR CODE HERE ***"
-        utils.raiseNotDefined
-        # define the network
-
-    def forward(self, x):
+        # build your own CNN model
         "*** YOUR CODE HERE ***"
         utils.raiseNotDefined()
-        # forward pass
+        # this is just an example, you can modify this.
+        self.conv1 = nn.Conv2d(state_dim, 16, kernel_size=8, stride=4)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        
+        "*** YOUR CODE HERE ***"
+        utils.raiseNotDefined()
         
         return x
 
 class ReplayBuffer:
+    # referenced [TD3 official implementation](https://github.com/sfujim/TD3/blob/master/utils.py#L5).
     def __init__(self, state_dim, action_dim, max_size=int(1e5)):
         self.states = np.zeros((max_size, *state_dim), dtype=np.float32)
         self.actions = np.zeros((max_size, *action_dim), dtype=np.int64)
@@ -68,10 +73,10 @@ class DQN:
         """
         DQN agent has four methods.
 
-        - __init__() is the standard initializer.
-        - act(), which receives a state as an np.ndarray and outputs actions following the epsilon-greedy policy.
-        - process(), which processes a single transition and defines the agent's actions at each step.
-        - learn(), which samples a mini-batch from the replay buffer to train the Q-network.
+        - __init__() as usual
+        - act() takes as input one state of np.ndarray and output actions by following epsilon-greedy policy.
+        - process() method takes one transition as input and define what the agent do for each step.
+        - learn() method samples a mini-batch from replay buffer and train q-network
         """
         self.action_dim = action_dim
         self.epsilon = epsilon
@@ -80,40 +85,77 @@ class DQN:
         self.warmup_steps = warmup_steps
         self.target_update_interval = target_update_interval
 
+        self.network = PacmanActionCNN(state_dim[0], action_dim)
+        self.target_network = PacmanActionCNN(state_dim[0], action_dim)
+        self.target_network.load_state_dict(self.network.state_dict())
+        self.optimizer = torch.optim.RMSprop(self.network.parameters(), lr)
+
+        self.buffer = ReplayBuffer(state_dim, (1, ), buffer_size)
         self.device = torch.device('cuda' if torch.cuda.is_available else 'cpu')
         self.network.to(self.device)
         self.target_network.to(self.device)
         
-        "*** YOUR CODE HERE ***"
-        # define the network, target network, optimizer, buffer, total_steps, epsilon_decay
-        utils.raiseNotDefined()
+        self.total_steps = 0
+        self.epsilon_decay = (epsilon - epsilon_min) / 1e6
     
     @torch.no_grad()
     def act(self, x, training=True):
         self.network.train(training)
         if training and ((np.random.rand() < self.epsilon) or (self.total_steps < self.warmup_steps)):
-            "*** YOUR CODE HERE ***"
-            utils.raiseNotDefined()
             # Random action
-            
+            action = np.random.randint(0, self.action_dim)
         else:
+            # output actions by following epsilon-greedy policy
+            x = torch.from_numpy(x).float().unsqueeze(0).to(self.device)
+            
             "*** YOUR CODE HERE ***"
             utils.raiseNotDefined()
-            # output actions by following epsilon-greedy policy
+            # get q-values from network
+            q_value = YOUR_CODE_HERE
+            # get action with maximum q-value
+            action = YOUR_CODE_HERE
         
-        return 0
+        return action
     
     def learn(self):
         "*** YOUR CODE HERE ***"
         utils.raiseNotDefined()
-        # samples a mini-batch from replay buffer and train q-network
         
-        return {} # return the information you need for logging
+        # sample a mini-batch from replay buffer
+        state, action, reward, next_state, terminated = map(lambda x: x.to(self.device), self.buffer.sample(self.batch_size))
+        
+        # get q-values from network
+        next_q = YOUR_CODE_HERE
+        # td_target: if terminated, only reward, otherwise reward + gamma * max(next_q)
+        td_target = YOUR_CODE_HERE
+        # compute loss with td_target and q-values
+        loss = YOUR_CODE_HERE
+        
+        # initialize optimizer
+        "self.optimizer.YOUR_CODE_HERE"
+        # backpropagation
+        YOUR_CODE_HERE
+        # update network
+        "self.optimizer.YOUR_CODE_HERE"
+        
+        return {YOUR_CODE_HERE} # return dictionary for logging
     
     def process(self, transition):
         "*** YOUR CODE HERE ***"
         utils.raiseNotDefined()
-        # takes one transition as input and define what the agent do for each step.
         
+        result = {}
+        self.total_steps += 1
         
-        return {} # return the information you need for logging
+        # update replay buffer
+        "self.buffer.YOUR_CODE_HERE"
+
+        if self.total_steps > self.warmup_steps:
+            result = self.learn()
+            
+        if self.total_steps % self.target_update_interval == 0:
+            # update target networ
+            "self.target_network.YOUR_CODE_HERE"
+        
+        self.epsilon -= self.epsilon_decay
+        return result
