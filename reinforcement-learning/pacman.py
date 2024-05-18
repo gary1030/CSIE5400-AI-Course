@@ -157,15 +157,15 @@ def main():
 if __name__ == "__main__":
     args = parse_args()
     
-    save_dir = args.save_root / f"{int(time.time())}"
-    # save_dir = args.save_root
+    # save_dir = args.save_root / f"{int(time.time())}"
+    save_dir = args.save_root
     if not save_dir.exists():
         save_dir.mkdir(parents=True)
     
     if args.eval:
         eval_env = gym.make(args.env_name, render_mode='rgb_array')
         eval_env = ImageEnv(eval_env, stack_frames=args.num_envs, image_hw=args.image_hw)
-        evaluate(agent=None, eval_env=eval_env, capture_frames=False)
+        evaluate(agent=None, eval_env=eval_env, capture_frames=True)
     else:
         main()
     
