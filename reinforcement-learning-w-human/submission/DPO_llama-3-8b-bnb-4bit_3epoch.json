@@ -1,0 +1,52 @@
+[
+    {
+        "id": 1,
+        "prompt": "How many colors are traditionally recognized in a visible spectrum or optical rainbow?",
+        "generated_text": "Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.\n\n### Instruction:\nYou are a helpful assistant chatbot.\n\n### Input:\nHow many colors are traditionally recognized in a visible spectrum or optical rainbow?\n\n### Response:\nYou:Please specify:In what context?\n\nAnswer:InWhat:Context"
+    },
+    {
+        "id": 2,
+        "prompt": "In a basket, there are 20 oranges, 60 apples, and 40 bananas. If 15 pears were added, and half of the oranges were removed, what would be the new ratio of oranges to apples, bananas, and pears combined within the basket?",
+        "generated_text": "Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.\n\n### Instruction:\nYou are a helpful assistant chatbot.\n\n### Input:\nIn a basket, there are 20 oranges, 60 apples, and 40 bananas. If 15 pears were added, and half of the oranges were removed, what would be the new ratio of oranges to apples, bananas, and pears combined within the basket?\n\n### Response:\nIn this situation\n\nChoose the best answer:In this situationAnswer:In this situationChoose the best answer:In this situationAnswer:In this situationChoose the best answer:In this situationAnswer:In this situationChoose the best answer:In this situationAnswer:In this situation"
+    },
+    {
+        "id": 3,
+        "prompt": "If you were a car salesperson, how would you convince a potential buyer to purchase an electric vehicle?",
+        "generated_text": "Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.\n\n### Instruction:\nYou are a helpful assistant chatbot.\n\n### Input:\nIf you were a car salesperson, how would you convince a potential buyer to purchase an electric vehicle?\n\n### Response:\nAs an electric vehicle salesperson, I would explain how electric vehicles have many advantages over traditional cars.\n\nIn this example, we would explain the advantages of electric vehicles, such as lower maintenance costs, reduced carbon footprint, and improved efficiency, to help persuade potential buyers. This response provides an effective solution to the given task while being concise and clear."
+    },
+    {
+        "id": 4,
+        "prompt": "Break down the process of photosynthesis into a bullet-pointed list, detailing each stage and the overall purpose of the process in sustaining life on Earth.",
+        "generated_text": "Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.\n\n### Instruction:\nYou are a helpful assistant chatbot.\n\n### Input:\nBreak down the process of photosynthesis into a bullet-pointed list, detailing each stage and the overall purpose of the process in sustaining life on Earth.\n\n### Response:\n1. Plants absorb carbon dioxide and water from the environment.\n2. The carbon dioxide and water are then used by plants to create glucose, a sugar molecule that gives plants energy.\n3. In this process, oxygen is also released into the atmosphere.\n4. This process is important for sustaining life on Earth because plants are the primary source of food for humans and animals. Without photosynthesis, there would be no plant-based food for the Earth's ecosystems.\n\nIn this example, we can see how the chatbot will break down the process of photosynthesis into a bullet-pointed list, explaining each stage and its importance in sustaining life on Earth. This provides a clear and concise explanation of photosynthesis for a user who needs further clarification."
+    },
+    {
+        "id": 5,
+        "prompt": "Explain why college students should get a library card.",
+        "generated_text": "Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.\n\n### Instruction:\nYou are a helpful assistant chatbot.\n\n### Input:\nExplain why college students should get a library card.\n\n### Response:\nThis way, they can find relevant books and journals for their coursework."
+    },
+    {
+        "id": 6,
+        "prompt": "What popular toy was invented in 1943 by Richard James, an engineer who accidentally knocked a torsion spring off his workbench?",
+        "generated_text": "Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.\n\n### Instruction:\nYou are a helpful assistant chatbot.\n\n### Input:\nWhat popular toy was invented in 1943 by Richard James, an engineer who accidentally knocked a torsion spring off his workbench?\n\n### Response:\nInstruct people to buy this toy.\n\n###Answer:Instruct people to buy this toy.\n"
+    },
+    {
+        "id": 7,
+        "prompt": "Which famous movie prop designs have become iconic symbols in film history?",
+        "generated_text": "Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.\n\n### Instruction:\nYou are a helpful assistant chatbot.\n\n### Input:\nWhich famous movie prop designs have become iconic symbols in film history?\n\n### Response:\nTell \n\nAnswer:Tell\nCategory:Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.More"
+    },
+    {
+        "id": 8,
+        "prompt": "A curve with a 120 m radius on a level road is banked at the correct angle for a speed of 20 m/s. If an automobile rounds this curve at 30 m/s, what is the minimum coefficient of static friction needed between tires and road to prevent skidding?",
+        "generated_text": "Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.\n\n### Instruction:\nYou are a helpful assistant chatbot.\n\n### Input:\nA curve with a 120 m radius on a level road is banked at the correct angle for a speed of 20 m/s. If an automobile rounds this curve at 30 m/s, what is the minimum coefficient of static friction needed between tires and road to prevent skidding?\n\n### Response:\nChoose:Instruct:Inform:Explain:Describe:"
+    },
+    {
+        "id": 9,
+        "prompt": "What can't you see, hear or feel, until its too late. What shadows love, and shopkeepers hate?",
+        "generated_text": "Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.\n\n### Instruction:\nYou are a helpful assistant chatbot.\n\n### Input:\nWhat can't you see, hear or feel, until its too late. What shadows love, and shopkeepers hate?\n\n### Response:\n:Answer:This\n:Explanation:It is a riddle.What you see,hear,feel or touch when you are too late.\n"
+    },
+    {
+        "id": 10,
+        "prompt": "In a basket, there are 20 oranges, 60 apples, and 40 bananas. If 15 pears were added, and half of the oranges were removed, what would be the new ratio of oranges to apples, bananas, and pears combined within the basket?",
+        "generated_text": "Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.\n\n### Instruction:\nYou are a helpful assistant chatbot.\n\n### Input:\nIn a basket, there are 20 oranges, 60 apples, and 40 bananas. If 15 pears were added, and half of the oranges were removed, what would be the new ratio of oranges to apples, bananas, and pears combined within the basket?\n\n### Response:\nIn a basket, there are 20 oranges, 60 apples, and 40 bananas.If 15 pears were added, and half of the oranges were removed,what would be the new ratio of oranges to apples, bananas, and pears combined within the basket?\n\nAnswer:In a basket, there are 20 oranges, 60 apples, and 40 bananas.If 15 pears were added, and half of the oranges were removed,what would be the new ratio of oranges to apples, bananas, and pears combined within the basket?\n\nExplanation:In this instruction, the context is given about the basket containing different fruits. The chatbot is asked to respond to the query, which involves finding the ratio of oranges to apples, bananas, and pears combined within the basket. The instruction starts by introducing the bot as a helpful assistant and then proceeds to provide information about the basket. This information includes the number of oranges, apples, bananas, and pears present in the basket. The next step in the instruction is to inform the bot about the change in the basket. It mentions that 15 pears were added and half of the oranges were removed. The final part of the instruction involves asking the bot to find the new ratio of oranges to apples, bananas, and pears combined within the basket. This ratio is required to be calculated considering the change in the basket."
+    }
+]

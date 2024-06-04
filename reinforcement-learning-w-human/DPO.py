@@ -12,7 +12,6 @@ from unsloth import is_bfloat16_supported
 from transformers import TrainingArguments, TextStreamer
 
 
-
 def DPO_train(args, output_dir):
     wandb.login(key=args.wandb_token)
     wandb.init(project="hw6_rlhf",
@@ -35,12 +34,27 @@ def DPO_train(args, output_dir):
     # ================================DO NOT CHANGE!================================
 
     # Model
-    # model, tokenizer = FastLanguageModel.from_pretrained(model_name=args.model_name,...)
-    utils.YOUR_CODE_HERE
+    # max_seq_length = 2048 # Choose any! We auto support RoPE Scaling internally!
+    dtype = torch_dtype
+    # Use 4bit quantization to reduce memory usage. Can be False.
+    load_in_4bit = True
+    model, tokenizer = FastLanguageModel.from_pretrained(
+        model_name=args.model_name, max_seq_length=args.max_length, dtype=dtype, load_in_4bit=load_in_4bit)
 
     # Perform model patching and add fast LoRA weights
-    # model = FastLanguageModel.get_peft_model(model,...)
-    utils.YOUR_CODE_HERE
+    model = FastLanguageModel.get_peft_model(
+        model,
+        r=16,  # Choose any number > 0 ! Suggested 8, 16, 32, 64, 128
+        target_modules=["q_proj", "k_proj", "v_proj", "o_proj",
+                        "gate_proj", "up_proj", "down_proj",],
+        lora_alpha=16,
+        lora_dropout=0,  # Supports any, but = 0 is optimized
+        bias="none",    # Supports any, but = "none" is optimized
+        use_gradient_checkpointing="unsloth",  # True or "unsloth" for very long context
+        random_state=3407,
+        use_rslora=False,  # We support rank stabilized LoRA
+        loftq_config=None,  # And LoftQ
+    )
 
     # Training arguments
     training_args = TrainingArguments(
@@ -71,8 +85,8 @@ def DPO_train(args, output_dir):
     dpo_trainer = DPOTrainer(
         model=model,
         tokenizer=tokenizer,
-        train_dataset=utils.YOUR_CODE_HERE,
-        eval_dataset=utils.YOUR_CODE_HERE,
+        train_dataset=dataset["train"],
+        eval_dataset=dataset["test"],
         args=training_args,
         beta=args.beta,
         max_length=args.max_length,
@@ -101,7 +115,7 @@ def DPO_train(args, output_dir):
         )
         prompt = tokenizer(prompt, return_tensors="pt").to("cuda")
         generated_sequences = model.generate(**prompt, streamer=text_streamer,
-                           max_new_tokens=500)
+                                             max_new_tokens=500)
         # Decode the generated output
         generated_text = tokenizer.batch_decode(
             generated_sequences, skip_special_tokens=True)[0]
@@ -113,14 +127,15 @@ def DPO_train(args, output_dir):
             "prompt": data["prompt"],
             "generated_text": generated_text
         })
-    
+
     # Ensure the submission directory exists
     submission_dir = "submission"
     if not os.path.exists(submission_dir):
         os.makedirs(submission_dir)
 
     # Write the output data to a JSON file
-    output_file = os.path.join(submission_dir, f"DPO_{args.model_name.split('/')[1]}.json")
+    output_file = os.path.join(
+        submission_dir, f"DPO_{args.model_name.split('/')[1]}.json")
     utils.write_json(output_data, output_file)
 
     # Flush memory

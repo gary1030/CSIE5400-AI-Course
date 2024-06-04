@@ -19,7 +19,8 @@ def parse_args():
                         choices=["DPO", "ORPO"])
     parser.add_argument("--model_name", type=str,
                         choices=["unsloth/llama-3-8b-bnb-4bit",
-                                 "unsloth/mistral-7b-v0.3-bnb-4bit"],
+                                 "unsloth/mistral-7b-v0.3-bnb-4bit",
+                                 "unsloth/tinyllama-bnb-4bit"],
                         required=True)
     parser.add_argument("--train", action="store_true")
     parser.add_argument("--inference_base_model", action="store_true")
@@ -30,7 +31,8 @@ def parse_args():
     parser.add_argument("--lr", type=float, default=5e-6)
     parser.add_argument("--lr_scheduler_type", type=str,
                         default="cosine", choices=["cosine", "linear"])
-    parser.add_argument("--max_steps", type=int, default=0, choices=[500, 1000, 1500])
+    parser.add_argument("--max_steps", type=int, default=0,
+                        choices=[500, 1000, 1500])
     parser.add_argument("--num_epochs", type=int, choices=[1, 3, 5])
     parser.add_argument("--optimizer", type=str, default="paged_adamw_32bit",
                         choices=["paged_adamw_32bit", "paged_adamw_8bit"])
@@ -62,7 +64,7 @@ if __name__ == "__main__":
 
     # Create the output directory path
     output_dir = Path(f"{args.output_dir}/{args.exp_name}_{current_time}")
-    
+
     # Create the directory if it doesn't exist
     if not output_dir.exists():
         output_dir.mkdir(parents=True)
@@ -72,7 +74,7 @@ if __name__ == "__main__":
     log_file_name = output_dir / f"{args.exp_name}-{current_time}.log"
     logging.basicConfig(filename=log_file_name,
                         level=logging.INFO, format="%(asctime)s - %(message)s")
-    
+
     log_hyperparameters(args)
 
     if args.train:
@@ -82,13 +84,16 @@ if __name__ == "__main__":
             ORPO.ORPO_train(args, output_dir)
         else:
             raise ValueError("Invalid experiment name")
-    
+
     if args.inference_base_model:
         if args.model_name == "unsloth/llama-3-8b-bnb-4bit":
             print("Inference with base model: unsloth/llama-3-8b-bnb-4bit")
             inference.LLM_inference(args)
         elif args.model_name == "unsloth/mistral-7b-v0.3-bnb-4bit":
             print("Inference with base model: unsloth/mistral-7b-v0.3-bnb-4bit")
+            inference.LLM_inference(args)
+        elif args.model_name == "unsloth/tinyllama-bnb-4bit":
+            print("Inference with base model: unsloth/tinyllama-bnb-4bit")
             inference.LLM_inference(args)
         else:
             raise ValueError("Invalid model name")

@@ -161,3 +161,5 @@ cython_debug/
 
 
 submissions/
+wandb/
+reinforcement-learning-w-human/outputs/
